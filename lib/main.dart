@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Todo Bloc',
+      debugShowCheckedModeBanner: false,
       home: BlocProvider(
         create: (context) => TodoBloc(),
         child: TodoPage(),
@@ -27,7 +28,7 @@ class TodoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Flutter Todo Bloc')),
+      appBar: AppBar(title: const Text('Flutter Todo Bloc')),
       body: Column(
         children: [
           Padding(
@@ -69,7 +70,7 @@ class TodoPage extends StatelessWidget {
                           IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () {
-                              context.read<TodoBloc>().add(DeleteTodo(index));
+                              _deleteTodoDialog(context,index);
                             },
                           ),
                         ],
@@ -93,10 +94,10 @@ class TodoPage extends StatelessWidget {
     context: parentContext,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Edit Task'),
+        title: const Text('Edit Task'),
         content: TextField(
           controller: _editController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Task',
           ),
         ),
@@ -110,19 +111,44 @@ class TodoPage extends StatelessWidget {
               }
               Navigator.of(context).pop();
             },
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
         ],
       );
     },
   );
 }
-
+void _deleteTodoDialog(BuildContext parentContext, int index) {
+  showDialog(
+    context: parentContext,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Edit Task'),
+        content: const Text('Are you Sure want to Delete'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              parentContext.read<TodoBloc>().add(DeleteTodo(index));
+              Navigator.of(context).pop();
+            },
+            child: const Text('Delete'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
 }
